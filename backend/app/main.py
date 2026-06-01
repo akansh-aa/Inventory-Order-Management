@@ -1,10 +1,8 @@
 from contextlib import asynccontextmanager
 from decimal import Decimal
-import os
 
 from fastapi import Depends, FastAPI, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
@@ -322,9 +320,3 @@ def create_order(payload: OrderCreate, db: Session = Depends(get_db)) -> Order:
         .first()
     )
     return created_order
-
-
-# Serve static files in production if the folder exists
-static_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "static")
-if os.path.exists(static_dir):
-    app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")

@@ -1,25 +1,38 @@
 services:
-  # Unified Web Service (FastAPI Backend serving React Frontend)
+  # Python Backend API (Docker Web Service)
   - type: web
-    name: inventory-app
+    name: inventory-backend
     runtime: docker
-    dockerfilePath: Dockerfile
-    dockerContext: .
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
     plan: free
     envVars:
       - key: APP_NAME
-        value: Inventory & Order Management System
+        value: Inventory & Order Management API
       - key: DATABASE_URL
         fromDatabase:
           name: inventory-db
           property: connectionString
       - key: CORS_ORIGINS
-        value: "*" # Fallback, though requests are same-origin in production
+        value: "*" # Allows frontend to make requests.
       - key: SEED_DEMO_DATA
         value: "true"
+
+  # React Frontend (Static Site)
+  - type: web
+    name: inventory-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: inventory-backend
+          property: url
 
 databases:
   # PostgreSQL Database
   - name: inventory-db
     plan: free
-
