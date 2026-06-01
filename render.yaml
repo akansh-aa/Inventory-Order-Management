@@ -2,7 +2,7 @@ services:
   # Python Backend API (Docker Web Service)
   - type: web
     name: inventory-backend
-    env: docker
+    runtime: docker
     dockerfilePath: backend/Dockerfile
     dockerContext: backend
     plan: free
@@ -19,11 +19,12 @@ services:
         value: "true"
 
   # React Frontend (Static Site)
-  - type: static
+  - type: web
     name: inventory-frontend
+    runtime: static
     rootDir: frontend
     buildCommand: npm install && npm run build
-    publishPath: dist
+    staticPublishPath: dist
     plan: free
     envVars:
       - key: VITE_API_URL
