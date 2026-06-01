@@ -3,7 +3,7 @@ services:
   - type: web
     name: inventory-backend
     env: docker
-    dockerfilePath: Dockerfile
+    dockerfilePath: backend/Dockerfile
     dockerContext: backend
     plan: free
     envVars:
@@ -19,11 +19,10 @@ services:
         value: "true"
 
   # React Frontend (Static Site)
-  - type: web
+  - type: static
     name: inventory-frontend
-    env: static
     rootDir: frontend
-    buildCommand: npm run build
+    buildCommand: npm install && npm run build
     publishPath: dist
     plan: free
     envVars:
@@ -36,6 +35,4 @@ services:
 databases:
   # PostgreSQL Database
   - name: inventory-db
-    databaseName: inventory
-    user: inventory
     plan: free
