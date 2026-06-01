@@ -28,10 +28,7 @@ services:
     plan: free
     envVars:
       - key: VITE_API_URL
-        fromService:
-          name: inventory-backend
-          type: web
-          property: url
+        sync: false # Render will prompt you to input the public backend URL
 
 databases:
   # PostgreSQL Database
