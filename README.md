@@ -87,43 +87,50 @@ Database:
 - `POSTGRES_USER`
 - `POSTGRES_PASSWORD`
 
-## Deployment Guide
+## Deployment Guide (Render Blueprint - One-Click Deployment)
 
-Recommended free-hosting path, verified against provider docs in June 2026:
+This application is configured for a **Unified Single-Service Deployment** on Render. The React frontend is compiled automatically inside the backend's multi-stage Docker build and served by the FastAPI application.
 
-1. Create a free PostgreSQL database on Neon or Supabase.
-2. Deploy the backend Docker image on Render as a Web Service. Render free web services can spin down when idle.
-3. Deploy the frontend on Cloudflare Pages, Vercel Hobby, or Netlify Free.
-4. Set frontend `VITE_API_URL` to the deployed backend URL.
-5. Set backend `DATABASE_URL` to the hosted PostgreSQL connection string.
-6. Set backend `CORS_ORIGINS` to the deployed frontend URL.
+### Why this is awesome:
+- **Zero Configuration**: No manual backend URL environment syncing is needed.
+- **Zero CORS Issues**: The frontend and backend run on the exact same port and domain.
+- **Free Tier Friendly**: You only need to deploy **one** Web Service and **one** PostgreSQL Database on Render, conserving free active hours.
 
-Provider docs:
+### Steps to Deploy:
+1. Push your code to your GitHub repository: `https://github.com/akansh-aa/Inventory-Order-Management`
+2. Log in to your [Render Dashboard](https://dashboard.render.com).
+3. Click **New** -> **Blueprint**.
+4. Connect your GitHub repository.
+5. Render will automatically parse the `render.yaml` file and prompt you to create:
+   - **`inventory-db`**: A free PostgreSQL Database.
+   - **`inventory-app`**: A free Web Service running the unified Docker build.
+6. Click **Approve** or **Apply**.
+7. Once the deploy succeeds, open your unified Web Service's URL. The entire React dashboard is fully functional and connected directly to the backend!
 
-- Render free services: https://render.com/free
-- Render Docker services: https://render.com/docs/docker
-- Neon pricing: https://neon.com/pricing
-- Supabase pricing: https://supabase.com/pricing
-- Cloudflare Pages limits: https://developers.cloudflare.com/pages/platform/limits/
-- Vercel Hobby plan: https://vercel.com/docs/accounts/plans/hobby
-- Netlify pricing: https://www.netlify.com/pricing/
+### Manual / Local Docker Build
 
-Build and push Docker images:
+To build and run the unified multi-stage container locally:
 
 ```bash
-docker build -t YOUR_DOCKERHUB_USERNAME/inventory-api:latest ./backend
-docker push YOUR_DOCKERHUB_USERNAME/inventory-api:latest
+# Build the unified image
+docker build -t inventory-unified -f Dockerfile .
 
-docker build --build-arg VITE_API_URL=https://YOUR_BACKEND_URL -t YOUR_DOCKERHUB_USERNAME/inventory-web:latest ./frontend
-docker push YOUR_DOCKERHUB_USERNAME/inventory-web:latest
+# Run the unified container with a local SQLite database for quick testing
+docker run -p 8000:8000 -e DATABASE_URL=sqlite:///./test.db -e SEED_DEMO_DATA=true inventory-unified
+```
+
+To build and push to DockerHub for submission:
+
+```bash
+docker build -t YOUR_DOCKERHUB_USERNAME/inventory-unified:latest -f Dockerfile .
+docker push YOUR_DOCKERHUB_USERNAME/inventory-unified:latest
 ```
 
 ## Submission Checklist
 
 Fill these in after publishing with your own accounts:
 
-- GitHub repository: `TODO`
-- Backend Docker image: `TODO`
-- Frontend Docker image: `TODO`
-- Live frontend URL: `TODO`
-- Live backend URL: `TODO`
+- GitHub repository: [akansh-aa/Inventory-Order-Management](https://github.com/akansh-aa/Inventory-Order-Management)
+- Unified Docker image: `YOUR_DOCKERHUB_USERNAME/inventory-unified:latest`
+- Live application URL: `https://inventory-app-xxxx.onrender.com`
+
